@@ -92,11 +92,11 @@ async def on_ready():
 
 @tree.command(name='membercount',description='メンバーカウンターを更新します')
 async def membercount(interaction: discord.Interaction):
-    satou_server=client.get_guild(int(os.environ['SATOU_SERVER_ID']))
-    satou_role=discord.utils.get(satou_server.roles, id=int(os.environ['SATOU_ROLE_ID']))
+    satou_server=client.get_guild(1196218959867949198)
+    satou_role=discord.utils.get(satou_server.roles, id=1196260747165040832)
     active_satou_role=[member for member in satou_server.members if member.status != discord.Status.offline and satou_role in member.roles]
-    membercount_channel=client.get_channel(int(os.environ['MEMBERCOUNT_CHANNEL_ID']))
-    active_membercount_channel=client.get_channel(int(os.environ['ACTIVE_MEMBERCOUNT_CHANNEL_ID']))
+    membercount_channel=client.get_channel(1197130806603292742)
+    active_membercount_channel=client.get_channel(1197140859116847135)
     await membercount_channel.edit(name=f'🧂｜メンバー➤ {len(satou_role.members)}')
     await active_membercount_channel.edit(name=f'🧂｜アクティブ➤ {len(active_satou_role)}')
     ws.update_cell(1, 2, len(satou_role.members))
@@ -106,11 +106,11 @@ async def membercount(interaction: discord.Interaction):
 
 @tasks.loop(minutes=30)
 async def loop_membercount():
-    satou_server=client.get_guild(int(os.environ['SATOU_SERVER_ID']))
-    satou_role=discord.utils.get(satou_server.roles, id=int(os.environ['SATOU_ROLE_ID']))
+    satou_server=client.get_guild(1196218959867949198)
+    satou_role=discord.utils.get(satou_server.roles, id=1196260747165040832)
     active_satou_role=[member for member in satou_server.members if member.status != discord.Status.offline and satou_role in member.roles]
-    membercount_channel=client.get_channel(int(os.environ['MEMBERCOUNT_CHANNEL_ID']))
-    active_membercount_channel=client.get_channel(int(os.environ['ACTIVE_MEMBERCOUNT_CHANNEL_ID']))
+    membercount_channel=client.get_channel(1197130806603292742)
+    active_membercount_channel=client.get_channel(1197140859116847135)
     await membercount_channel.edit(name=f'🧂｜メンバー➤ {len(satou_role.members)}')
     await active_membercount_channel.edit(name=f'🧂｜アクティブ➤ {len(active_satou_role)}')
     ws.update_cell(1, 2, len(satou_role.members))
@@ -119,14 +119,14 @@ async def loop_membercount():
 
 @tree.command(name='boostlv',description='テスト')
 async def test(interaction: discord.Interaction):
-    guild=client.get_guild(int(os.environ['SATOU_SERVER_ID']))
+    guild=client.get_guild(1196218959867949198)
     boost_lv=guild.premium_tier
     ws.update_cell(3, 2, boost_lv)
     await interaction.response.send_message('うぇい:v: ',ephemeral=True)
 
 @tasks.loop(hours=24)
 async def everyday_task():
-    guild=client.get_guild(int(os.environ['SATOU_SERVER_ID']))
+    guild=client.get_guild(1196218959867949198)
     boost_lv=guild.premium_tier
     ws.update_cell(3, 2, boost_lv)
 
