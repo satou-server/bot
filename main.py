@@ -8,8 +8,9 @@ from discord.ext import commands, tasks
 from datetime import datetime
 import gspread
 # from google.oauth2.service_account import Credentials
-# from google.oauth2 import service_account
-# import json
+from google.oauth2 import service_account
+import json
+from keep_alive import keep_alive
 
 load_dotenv()
 
@@ -20,24 +21,24 @@ client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 bot = commands.Bot(command_prefix='/', intents=intents)
 
-# service_account_key_str = os.environ.get('SERVICE_ACCOUNT')
+service_account_key_str = os.environ.get('SERVICE_ACCOUNT')
 
-# service_account_info = json.loads(service_account_key_str)
+service_account_info = json.loads(service_account_key_str)
 
-# scopes = [
-#     'https://www.googleapis.com/auth/spreadsheets',
-#     'https://www.googleapis.com/auth/drive'
-# ]
+scopes = [
+    'https://www.googleapis.com/auth/spreadsheets',
+    'https://www.googleapis.com/auth/drive'
+]
 
-# credentials = service_account.Credentials.from_service_account_info(
-#     service_account_info, scopes=scopes
-# )
+credentials = service_account.Credentials.from_service_account_info(
+    service_account_info, scopes=scopes
+)
 
-# gc = gspread.authorize(credentials)
+gc = gspread.authorize(credentials)
 
-# sh = gc.open_by_key('1OitzgfW-9LMzPcxDpfbrL2PcNJArKowX836kNMVE2xs')
+sh = gc.open_by_key('1OitzgfW-9LMzPcxDpfbrL2PcNJArKowX836kNMVE2xs')
 
-# ws = sh.get_worksheet(0)
+ws = sh.get_worksheet(0)
 
 # # messageログ
 # log_path = f'log.csv'
@@ -111,8 +112,8 @@ async def membercount(interaction: discord.Interaction):
     active_membercount_channel=client.get_channel(1197140859116847135)
     await membercount_channel.edit(name=f'🧂｜メンバー➤ {len(satou_role.members)}')
     await active_membercount_channel.edit(name=f'🧂｜アクティブ➤ {len(active_satou_role)}')
-    # ws.update_cell(1, 2, len(satou_role.members))
-    # ws.update_cell(2, 2, len(active_satou_role))
+    ws.update_cell(1, 2, len(satou_role.members))
+    ws.update_cell(2, 2, len(active_satou_role))
     await interaction.response.send_message('カウンターを更新しました。',ephemeral=True)
     print(f'------------------------------\n  コマンドでの実行検知\n\033[34m{datetime.now()}\033[0m\nsatou_role: {len(satou_role.members)}\nactive_satou_role: {len(active_satou_role)}\n------------------------------')
 
@@ -125,22 +126,23 @@ async def loop_membercount():
     active_membercount_channel=client.get_channel(1197140859116847135)
     await membercount_channel.edit(name=f'🧂｜メンバー➤ {len(satou_role.members)}')
     await active_membercount_channel.edit(name=f'🧂｜アクティブ➤ {len(active_satou_role)}')
-    # ws.update_cell(1, 2, len(satou_role.members))
-    # ws.update_cell(2, 2, len(active_satou_role))
+    ws.update_cell(1, 2, len(satou_role.members))
+    ws.update_cell(2, 2, len(active_satou_role))
     print(f'------------------------------\n  タスクでの実行検知\n\033[32m{datetime.now()}\033[0m\nsatou_role: {len(satou_role.members)}\nactive_satou_role: {len(active_satou_role)}\n------------------------------')
 
 @tree.command(name='boostlv',description='テスト')
 async def test(interaction: discord.Interaction):
     guild=client.get_guild(1196218959867949198)
     boost_lv=guild.premium_tier
-    # ws.update_cell(3, 2, boost_lv)
+    ws.update_cell(3, 2, boost_lv)
     await interaction.response.send_message('うぇい:v: ',ephemeral=True)
 
 @tasks.loop(hours=24)
 async def everyday_task():
     guild=client.get_guild(1196218959867949198)
     boost_lv=guild.premium_tier
-    # ws.update_cell(3, 2, boost_lv)
+    ws.update_cell(3, 2, boost_lv)
 
 
+keep_alive()
 client.run(TOKEN)
