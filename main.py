@@ -7,6 +7,9 @@ from discord import app_commands, Guild
 from discord.ext import commands, tasks
 from datetime import datetime
 import gspread
+# from google.oauth2.service_account import Credentials
+from google.oauth2 import service_account
+import json
 
 load_dotenv()
 
@@ -17,11 +20,20 @@ client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 bot = commands.Bot(command_prefix='/', intents=intents)
 
-dir_path = os.path.dirname(__file__) # 作業フォルダの取得
-gc = gspread.oauth(
-                   credentials_filename=os.path.join(dir_path, "client_secret.json"), # 認証用のJSONファイル
-                   authorized_user_filename=os.path.join(dir_path, "authorized_user.json"), # 証明書の出力ファイル
-                   )
+service_account_key_str = os.environ.get('SERVICE_ACCOUNT')
+
+service_account_info = json.loads(service_account_key_str)
+
+scopes = [
+    'https://www.googleapis.com/auth/spreadsheets',
+    'https://www.googleapis.com/auth/drive'
+]
+
+credentials = service_account.Credentials.from_service_account_info(
+    service_account_info, scopes=scopes
+)
+
+gc = gspread.authorize(credentials)
 
 sh = gc.open_by_key('1OitzgfW-9LMzPcxDpfbrL2PcNJArKowX836kNMVE2xs')
 
